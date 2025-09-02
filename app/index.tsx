@@ -1,5 +1,6 @@
-import ComponentShowcase from "./components/ComponentShowcase";
+import { Redirect } from "expo-router";
 
 export default function Index() {
-  return <ComponentShowcase />;
+  // When the app loads, send user straight to login
+  return <Redirect href="/login" />;
 }
