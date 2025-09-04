@@ -8,17 +8,17 @@ export default function ComponentShowcase() {
     {
       name: "Chicken Adobo",
       desc: "A Filipino dish with soy sauce, vinegar, and garlic.",
-      image: require("/Users/user/Documents/Lui/lui-app/assets/images/adobo.jpg"),
+      image: require("../../assets/images/adobo.jpg"),
     },
     {
       name: "Pork Sinigang",
       desc: "A sour tamarind soup with vegetables and pork.",
-      image: require("/Users/user/Documents/Lui/lui-app/assets/images/sinigang.jpeg"),
+      image: require("../../assets/images/sinigang.jpeg"),
     },
     {
       name: "Kare-Kare",
       desc: "A peanut-based stew with oxtail and vegetables.",
-      image: require("/Users/user/Documents/Lui/lui-app/assets/images/karekare.jpeg"),
+      image: require("../../assets/images/karekare.jpeg"),
     },
   ];
 

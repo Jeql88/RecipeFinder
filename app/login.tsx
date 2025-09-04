@@ -21,6 +21,7 @@ export default function LoginScreen() {
   const handlePress = (action: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     AccessibilityInfo.announceForAccessibility(`${action} pressed`);
+    router.push("/playlist");
   };
 
   return (
