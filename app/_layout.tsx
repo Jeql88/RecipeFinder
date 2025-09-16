@@ -19,13 +19,13 @@ export default function RootLayout() {
         if (!netInfo.isConnected) {
           if (savedScreen) {
             // Offline + cache → restore last visited
-            router.replace(savedScreen as any);
+            router.replace(savedScreen);
           } else {
             // Offline + no cache → default to profile
             router.replace("/profile");
           }
         }
-        // Online → do nothing, Stack will start at its initialRouteName
+        // Online → do nothing (initialRouteName will show)
       } catch (e) {
         console.warn("Failed to load navigation state", e);
         router.replace("/profile");
@@ -35,9 +35,9 @@ export default function RootLayout() {
     };
 
     restoreState();
-  }, []);
+  }, [router]);
 
-  // Whenever route changes, save it
+  // save current route (segments -> path)
   React.useEffect(() => {
     const path = "/" + segments.join("/");
     if (path && path !== "/") {
@@ -55,27 +55,31 @@ export default function RootLayout() {
 
   return (
     <Stack
-      initialRouteName="login" // default entrypoint
+      initialRouteName="login"
       screenOptions={{
-        headerStyle: { backgroundColor: "#000" },
+        headerTransparent: true, // keeps header space but shows your gradient
+        headerTitle: "",
+        headerBackTitleVisible: false,
         headerTintColor: "#fff",
-        headerTitleStyle: { fontWeight: "bold" },
       }}
     >
-      {/* Auth screens - no header */}
+      {/* Auth (no header) */}
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="register" options={{ headerShown: false }} />
 
-      {/* Tabs */}
+      {/* Tabs / App */}
       <Stack.Screen name="home" options={{ headerShown: false }} />
-      <Stack.Screen name="playlist" options={{ headerShown: false }} />
+      <Stack.Screen name="playlists" options={{ headerShown: false }} />
       <Stack.Screen name="library" options={{ headerShown: false }} />
       <Stack.Screen name="create" options={{ headerShown: false }} />
 
-      {/* Extra screens (header shown unless overridden) */}
+      {/* Screens that should show back arrow (header transparent reserved space) */}
       <Stack.Screen name="profile" />
       <Stack.Screen name="edit-profile" />
       <Stack.Screen name="settings" />
+
+      {/* Playlist Builder route (new) */}
+      <Stack.Screen name="playlist-builder" options={{ headerShown: false }} />
     </Stack>
   );
 }

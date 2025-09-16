@@ -64,7 +64,7 @@ export default function BottomNav() {
           color={focused ? "#1DB954" : "#fff"}
         />
       ),
-      route: "/create",
+      route: "/playlist-builder", // 👈 changed from /create
     },
   ];
 
