@@ -53,6 +53,13 @@ Used React Native to follow Spotify's navigation
 
 </p>
 
+# React Native Activity 5 - Persistence and State
+
+Showed persistence by adding a song to a playlist, then closing the app, then upon opening the app again, the song still persists in the device.
+
+<p align="center"> <img width="328" height="726" alt="Activity 5 Screenshot 1" src="https://github.com/user-attachments/assets/27dd83bd-d48c-4390-939f-2559fb03881a" /> <img width="330" height="726" alt="Activity 5 Screenshot 2" src="https://github.com/user-attachments/assets/6ee4b9a1-4fa0-493f-abd1-3c2de3f3168f" /> <img width="329" height="731" alt="image" src="https://github.com/user-attachments/assets/e6b1d1d5-8188-45c5-b4c1-8a2fc43d8e6a" />
+ </p>
+
 
 ---
 
