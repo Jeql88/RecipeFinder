@@ -59,7 +59,7 @@ export default function RootLayout() {
       screenOptions={{
         headerTransparent: true, // keeps header space but shows your gradient
         headerTitle: "",
-        headerBackTitleVisible: false,
+        headerShown: false,
         headerTintColor: "#fff",
       }}
     >
