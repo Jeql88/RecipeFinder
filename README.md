@@ -60,6 +60,14 @@ Showed persistence by adding a song to a playlist, then closing the app, then up
 <p align="center"> <img width="328" height="726" alt="Activity 5 Screenshot 1" src="https://github.com/user-attachments/assets/27dd83bd-d48c-4390-939f-2559fb03881a" /> <img width="330" height="726" alt="Activity 5 Screenshot 2" src="https://github.com/user-attachments/assets/6ee4b9a1-4fa0-493f-abd1-3c2de3f3168f" /> <img width="329" height="731" alt="image" src="https://github.com/user-attachments/assets/e6b1d1d5-8188-45c5-b4c1-8a2fc43d8e6a" />
  </p>
 
+# React Native Activity 6 - Spotify Profile Form Creation
+
+Showed input validation, and async storage link with profile information with pictures.
+<img width="323" height="724" alt="image" src="https://github.com/user-attachments/assets/ea53bbd4-5fce-4316-8820-58d42fa53b32" />
+<img width="320" height="725" alt="image" src="https://github.com/user-attachments/assets/5e7f8df8-33d8-47d7-bfb3-6a1db92f0ddb" />
+<img width="321" height="720" alt="image" src="https://github.com/user-attachments/assets/8713125b-dbbd-424c-8dce-59505d104f2e" />
+<img width="327" height="720" alt="image" src="https://github.com/user-attachments/assets/a1576c19-8404-4994-9bfd-1cef0300df53" />
+
 
 ---
 
