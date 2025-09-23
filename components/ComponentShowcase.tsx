@@ -36,7 +36,7 @@ export default function ComponentShowcase() {
         }}
       >
         <TouchableOpacity>
-          <Text style={{ fontSize: 20, fontWeight: "bold" }}>FindRecipes</Text>
+          <Text style={{ fontSize: 20, fontWeight: "600" }}>FindRecipes</Text>
         </TouchableOpacity>
         <Button title="Nav" onPress={() => {}} />
       </View>
@@ -66,7 +66,7 @@ export default function ComponentShowcase() {
                 style={{ width: "100%", height: 200, borderRadius: 12 }}
                 resizeMode="cover"
               />
-              <Text style={{ marginTop: 12, fontSize: 18, fontWeight: "bold" }}>
+              <Text style={{ marginTop: 12, fontSize: 18, fontWeight: "600" }}>
                 {item.name}
               </Text>
               <Text style={{ fontSize: 14, color: "gray", textAlign: "center", marginTop: 4 }}>

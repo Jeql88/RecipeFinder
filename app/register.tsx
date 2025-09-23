@@ -193,7 +193,7 @@ const styles = StyleSheet.create({
   },
   headerText: {
     fontSize: 26,
-    fontWeight: "bold",
+    fontWeight: "600",
     color: "#fff",
   },
   input: {
@@ -213,7 +213,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     color: "#1DB954",
-    fontWeight: "bold",
+    fontWeight: "600",
     alignSelf: "flex-start",
     marginBottom: 8,
     marginTop: 5,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
   },
   genderText: {
     color: "#1DB954",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   genderTextSelected: {
     color: "#fff",
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
     fontSize: 16,
   },
   smallText: {
@@ -304,6 +304,6 @@ const styles = StyleSheet.create({
   },
   loginLink: {
     color: "#1DB954",
-    fontWeight: "bold",
+    fontWeight: "600",
   },
 });

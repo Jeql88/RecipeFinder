@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import NavBar from "../components/BottomNav";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import CustomDrawer from "@/components/CustomDrawer";
+import { useTheme } from "../app/context/ThemeContext";
 
 type Playlist = {
   id: string;
@@ -36,6 +37,8 @@ export default function PlaylistsScreen() {
   const [search, setSearch] = useState("");
   const [drawerOpen, setDrawerOpen] = useState(false);
 
+  const { colors } = useTheme(); // ✅ use global colors
+
   const openPlaylist = (p: Playlist) => {
     router.push("/playlist"); // placeholder
   };
@@ -43,22 +46,25 @@ export default function PlaylistsScreen() {
   return (
     <>
       <LinearGradient
-        colors={["#0d0d0f", "#121214", "#000"]}
+        colors={[colors.background, colors.surface]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
-        style={styles.container}
+        style={[styles.container, { backgroundColor: colors.background }]}
       >
         {/* Header with Profile + Search */}
         <View style={styles.topBar}>
           <ProfileAvatar onPress={() => setDrawerOpen(true)} />
-          <Text style={styles.searchTitle}>Search</Text>
+          <Text style={[styles.searchTitle, { color: colors.text }]}>Search</Text>
         </View>
 
         {/* Search Bar */}
         <TextInput
-          style={styles.searchBar}
+          style={[
+            styles.searchBar,
+            { backgroundColor: colors.surface, color: colors.text, borderColor: colors.border },
+          ]}
           placeholder="What do you want to listen to?"
-          placeholderTextColor="#aaa"
+          placeholderTextColor={colors.textSecondary}
           value={search}
           onChangeText={setSearch}
         />
@@ -70,9 +76,13 @@ export default function PlaylistsScreen() {
           {/* Quick grid */}
           <View style={styles.grid}>
             {PLAYLISTS.slice(0, 6).map((p) => (
-              <TouchableOpacity key={p.id} style={styles.tile} onPress={() => openPlaylist(p)}>
+              <TouchableOpacity
+                key={p.id}
+                style={[styles.tile, { backgroundColor: colors.card, borderColor: colors.border }]}
+                onPress={() => openPlaylist(p)}
+              >
                 <Image source={{ uri: p.image }} style={styles.tileCover} />
-                <Text numberOfLines={2} style={styles.tileTitle}>
+                <Text numberOfLines={2} style={[styles.tileTitle, { color: colors.text }]}>
                   {p.title}
                 </Text>
               </TouchableOpacity>
@@ -80,7 +90,7 @@ export default function PlaylistsScreen() {
           </View>
 
           {/* Section: Made for You */}
-          <Text style={styles.sectionTitle}>Made for you</Text>
+          <Text style={[styles.sectionTitle, { color: colors.text }]}>Made for you</Text>
           <ScrollView horizontal showsHorizontalScrollIndicator={false}>
             {PLAYLISTS.map((p) => (
               <TouchableOpacity
@@ -88,11 +98,14 @@ export default function PlaylistsScreen() {
                 style={styles.card}
                 onPress={() => openPlaylist(p)}
               >
-                <Image source={{ uri: p.image }} style={styles.cardCover} />
-                <Text numberOfLines={1} style={styles.cardTitle}>
+                <Image
+                  source={{ uri: p.image }}
+                  style={[styles.cardCover, { backgroundColor: colors.surface }]}
+                />
+                <Text numberOfLines={1} style={[styles.cardTitle, { color: colors.text }]}>
                   {p.title}
                 </Text>
-                <Text numberOfLines={2} style={styles.cardSub}>
+                <Text numberOfLines={2} style={[styles.cardSub, { color: colors.textSecondary }]}>
                   Handpicked tracks based on your taste.
                 </Text>
               </TouchableOpacity>
@@ -122,19 +135,17 @@ const styles = StyleSheet.create({
     marginBottom: 12,
   },
   searchTitle: {
-    color: "#fff",
     fontSize: 24,
     fontWeight: "700",
   },
 
   searchBar: {
-    backgroundColor: "#1f1f1f",
     borderRadius: 8,
     paddingVertical: 8,
     paddingHorizontal: 12,
     fontSize: 16,
-    color: "#fff",
     marginBottom: 20,
+    borderWidth: 1,
   },
 
   scrollContent: {
@@ -150,19 +161,17 @@ const styles = StyleSheet.create({
   tile: {
     width: "48%",
     height: 64,
-    backgroundColor: "#2a2a2a",
     borderRadius: 8,
     marginBottom: 12,
     overflow: "hidden",
     flexDirection: "row",
     alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#1f1f1f",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 3 },
     shadowOpacity: 0.35,
     shadowRadius: 4,
     elevation: 4,
+    borderWidth: 1,
   },
   tileCover: {
     width: 64,
@@ -170,14 +179,12 @@ const styles = StyleSheet.create({
   },
   tileTitle: {
     flex: 1,
-    color: "#fff",
     fontWeight: "600",
     marginLeft: 10,
     marginRight: 6,
   },
 
   sectionTitle: {
-    color: "#fff",
     fontSize: 20,
     fontWeight: "700",
     marginBottom: 12,
@@ -190,15 +197,12 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 8,
-    backgroundColor: "#121212",
     marginBottom: 10,
   },
   cardTitle: {
-    color: "#fff",
     fontWeight: "700",
   },
   cardSub: {
-    color: "#9b9b9b",
     fontSize: 12,
     marginTop: 2,
   },

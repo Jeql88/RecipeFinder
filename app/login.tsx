@@ -122,7 +122,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
   signupContainer: { flexDirection: "row", marginTop: 20 },
   signupText: { color: "#aaa" },
-  signupLink: { color: "#1DB954", fontWeight: "bold" },
+  signupLink: { color: "#1DB954", fontWeight: "600" },
 
   container: {
     flex: 1,
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 30,
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
     marginBottom: 40,
   },
   input: {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "#fff",
-    fontWeight: "bold",
+    fontWeight: "600",
     fontSize: 16,
   },
   smallText: {

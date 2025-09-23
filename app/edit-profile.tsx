@@ -532,7 +532,7 @@ const styles = StyleSheet.create({
   headerTitle: {
     color: "#fff",
     fontSize: 24,
-    fontWeight: "bold",
+    fontWeight: "600",
   },
   headerSpacer: {
     width: 60,
@@ -581,7 +581,7 @@ const styles = StyleSheet.create({
   previewName: {
     color: "#fff",
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: "600",
     marginBottom: 4,
   },
   previewUsername: {

@@ -504,7 +504,7 @@ export default function PlaylistBuilderScreen() {
 const styles = StyleSheet.create({
   bg: { flex: 1 },
   container: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
-  header: { color: "#fff", fontSize: 28, fontWeight: "bold", marginBottom: 16 },
+  header: { color: "#fff", fontSize: 28, fontWeight: "600", marginBottom: 16 },
   playlistInput: {
     backgroundColor: "#2a2a2a",
     color: "#fff",
@@ -578,7 +578,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  removeButtonText: { color: "#fff", fontSize: 16, fontWeight: "bold" },
+  removeButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
   emptyState: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 40 },
   emptyStateText: { color: "#fff", fontSize: 18, fontWeight: "600", marginBottom: 8 },
   emptyStateSubtext: { color: "#9a9a9a", fontSize: 14 },
@@ -615,7 +615,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center"
   },
-  deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "bold" },
+  deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "600" },
   loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
   loadingText: { color: "#fff", fontSize: 16 },
 });
