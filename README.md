@@ -63,6 +63,13 @@ Showed persistence by adding a song to a playlist, then closing the app, then up
 
 ---
 
+# React Native Activity 6 - Advanced Theme System
+
+Implemented a sophisticated theme system with Redux Toolkit, advanced animations, custom themes, accessibility features, and analytics.
+
+
+---
+
 ## 🚀 Setup
 
 ```bash

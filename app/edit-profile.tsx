@@ -12,10 +12,11 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
-import * as ImagePicker from "expo-image-picker"; // Import ImagePicker
+import * as ImagePicker from "expo-image-picker";
 import { useRouter } from "expo-router";
 import { profileStorage } from "../app/utils/storage";
 import NavBar from "../components/BottomNav";
+import { useTheme } from "./hooks/useTheme";
 
 // Types
 interface ProfileFormData {
@@ -97,8 +98,9 @@ const GENRES = [
 const ProfilePreview: React.FC<{
   formData: ProfileFormData;
   errors: FormErrors;
-  onChangeAvatar: () => void; // Add callback for changing avatar
-}> = ({ formData, errors, onChangeAvatar }) => {
+  onChangeAvatar: () => void;
+  colors: any;
+}> = ({ formData, errors, onChangeAvatar, colors }) => {
   const getGenreImage = (selectedGenre: string) => {
     const genreImages: { [key: string]: string } = {
       Pop: "https://via.placeholder.com/100/FF1493/FFFFFF?text=POP",
@@ -115,36 +117,115 @@ const ProfilePreview: React.FC<{
     return genreImages[selectedGenre] || "https://via.placeholder.com/100/535353/FFFFFF?text=MUSIC";
   };
 
+  const previewStyles = StyleSheet.create({
+    previewContainer: {
+      backgroundColor: colors.surface,
+      borderRadius: 12,
+      padding: 20,
+      marginBottom: 24,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    profilePreview: {
+      flexDirection: "row",
+      alignItems: "center",
+    },
+    avatarContainer: {
+      position: "relative",
+    },
+    previewAvatar: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      marginRight: 20,
+    },
+    changeAvatarOverlay: {
+      position: "absolute",
+      bottom: 0,
+      right: 20,
+      backgroundColor: "rgba(0, 0, 0, 0.6)",
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 12,
+    },
+    changeAvatarText: {
+      color: colors.text,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    previewInfo: {
+      flex: 1,
+    },
+    previewName: {
+      color: colors.text,
+      fontSize: 20,
+      fontWeight: "600",
+      marginBottom: 4,
+    },
+    previewUsername: {
+      color: colors.textSecondary,
+      fontSize: 16,
+      marginBottom: 4,
+    },
+    previewEmail: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      marginBottom: 8,
+    },
+    previewError: {
+      color: colors.error,
+    },
+    genreChip: {
+      backgroundColor: colors.primary,
+      paddingHorizontal: 12,
+      paddingVertical: 4,
+      borderRadius: 12,
+      alignSelf: "flex-start",
+      marginBottom: 8,
+    },
+    genreText: {
+      color: colors.text,
+      fontSize: 12,
+      fontWeight: "600",
+    },
+    previewBio: {
+      color: colors.textSecondary,
+      fontSize: 14,
+      fontStyle: "italic",
+      lineHeight: 18,
+    },
+  });
+
   return (
-    <View style={styles.previewContainer}>
-      <View style={styles.profilePreview}>
-        <TouchableOpacity onPress={onChangeAvatar} style={styles.avatarContainer}>
+    <View style={previewStyles.previewContainer}>
+      <View style={previewStyles.profilePreview}>
+        <TouchableOpacity onPress={onChangeAvatar} style={previewStyles.avatarContainer}>
           <Image
             source={{
-              uri: formData.avatar || getGenreImage(formData.genre), // Use avatar if available, else genre image
+              uri: formData.avatar || getGenreImage(formData.genre),
             }}
-            style={styles.previewAvatar}
+            style={previewStyles.previewAvatar}
           />
-          <View style={styles.changeAvatarOverlay}>
-            <Text style={styles.changeAvatarText}>Change</Text>
+          <View style={previewStyles.changeAvatarOverlay}>
+            <Text style={previewStyles.changeAvatarText}>Change</Text>
           </View>
         </TouchableOpacity>
-        <View style={styles.previewInfo}>
-          <Text style={[styles.previewName, errors.username && styles.previewError]}>
+        <View style={previewStyles.previewInfo}>
+          <Text style={[previewStyles.previewName, errors.username && previewStyles.previewError]}>
             {formData.displayName || formData.username || "Your Name"}
           </Text>
-          <Text style={[styles.previewUsername, errors.username && styles.previewError]}>
+          <Text style={[previewStyles.previewUsername, errors.username && previewStyles.previewError]}>
             @{formData.username || "username"}
           </Text>
-          <Text style={[styles.previewEmail, errors.email && styles.previewError]}>
+          <Text style={[previewStyles.previewEmail, errors.email && previewStyles.previewError]}>
             {formData.email || "your.email@domain.com"}
           </Text>
           {formData.genre && (
-            <View style={styles.genreChip}>
-              <Text style={styles.genreText}>{formData.genre}</Text>
+            <View style={previewStyles.genreChip}>
+              <Text style={previewStyles.genreText}>{formData.genre}</Text>
             </View>
           )}
-          {formData.bio && <Text style={styles.previewBio}>{formData.bio}</Text>}
+          {formData.bio && <Text style={previewStyles.previewBio}>{formData.bio}</Text>}
         </View>
       </View>
     </View>
@@ -161,6 +242,7 @@ const FieldInput: React.FC<{
   multiline?: boolean;
   maxLength?: number;
   keyboardType?: "default" | "email-address";
+  colors: any;
 }> = ({
   label,
   value,
@@ -170,22 +252,67 @@ const FieldInput: React.FC<{
   multiline = false,
   maxLength,
   keyboardType = "default",
+  colors,
 }) => {
   const [focused, setFocused] = useState(false);
 
+  const fieldStyles = StyleSheet.create({
+    fieldContainer: {
+      marginBottom: 20,
+    },
+    fieldLabel: {
+      color: colors.text,
+      fontWeight: "600",
+      fontSize: 16,
+      marginBottom: 8,
+    },
+    fieldInput: {
+      backgroundColor: colors.surface,
+      color: colors.text,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderRadius: 8,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    multilineInput: {
+      height: 80,
+      textAlignVertical: "top",
+    },
+    inputError: {
+      borderColor: colors.error,
+      backgroundColor: colors.surface,
+    },
+    inputFocused: {
+      borderColor: colors.primary,
+    },
+    characterCount: {
+      color: colors.textSecondary,
+      fontSize: 12,
+      textAlign: "right",
+      marginTop: 4,
+    },
+    errorText: {
+      color: colors.error,
+      fontSize: 12,
+      marginTop: 4,
+    },
+  });
+
   return (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>{label}</Text>
+    <View style={fieldStyles.fieldContainer}>
+      <Text style={fieldStyles.fieldLabel}>{label}</Text>
       <TextInput
         value={value}
         onChangeText={onChangeText}
         placeholder={placeholder}
-        placeholderTextColor="#9a9a9a"
+        placeholderTextColor={colors.textSecondary}
         style={[
-          styles.fieldInput,
-          multiline && styles.multilineInput,
-          error && styles.inputError,
-          focused && !error && styles.inputFocused,
+          fieldStyles.fieldInput,
+          multiline && fieldStyles.multilineInput,
+          error && fieldStyles.inputError,
+          focused && !error && fieldStyles.inputFocused,
         ]}
         multiline={multiline}
         maxLength={maxLength}
@@ -195,11 +322,11 @@ const FieldInput: React.FC<{
         returnKeyType={multiline ? "default" : "next"}
       />
       {maxLength && (
-        <Text style={styles.characterCount}>
+        <Text style={fieldStyles.characterCount}>
           {value.length}/{maxLength}
         </Text>
       )}
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={fieldStyles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -209,29 +336,75 @@ const GenreSelector: React.FC<{
   selectedGenre: string;
   onSelectGenre: (genre: string) => void;
   error?: string;
-}> = ({ selectedGenre, onSelectGenre, error }) => {
+  colors: any;
+}> = ({ selectedGenre, onSelectGenre, error, colors }) => {
+  const genreStyles = StyleSheet.create({
+    fieldContainer: {
+      marginBottom: 20,
+    },
+    fieldLabel: {
+      color: colors.text,
+      fontWeight: "600",
+      fontSize: 16,
+      marginBottom: 8,
+    },
+    genreScrollContainer: {
+      gap: 8,
+      paddingRight: 20,
+    },
+    genreOption: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 16,
+      paddingVertical: 10,
+      borderRadius: 20,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    genreOptionSelected: {
+      backgroundColor: colors.primary,
+      borderColor: colors.primary,
+    },
+    genreOptionError: {
+      borderColor: colors.error,
+    },
+    genreOptionText: {
+      color: colors.text,
+      fontSize: 14,
+      fontWeight: "500",
+    },
+    genreOptionTextSelected: {
+      color: colors.text,
+      fontWeight: "600",
+    },
+    errorText: {
+      color: colors.error,
+      fontSize: 12,
+      marginTop: 4,
+    },
+  });
+
   return (
-    <View style={styles.fieldContainer}>
-      <Text style={styles.fieldLabel}>Favorite Genre</Text>
+    <View style={genreStyles.fieldContainer}>
+      <Text style={genreStyles.fieldLabel}>Favorite Genre</Text>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.genreScrollContainer}
+        contentContainerStyle={genreStyles.genreScrollContainer}
       >
         {GENRES.map((genre) => (
           <TouchableOpacity
             key={genre}
             onPress={() => onSelectGenre(genre)}
             style={[
-              styles.genreOption,
-              selectedGenre === genre && styles.genreOptionSelected,
-              error && selectedGenre === genre && styles.genreOptionError,
+              genreStyles.genreOption,
+              selectedGenre === genre && genreStyles.genreOptionSelected,
+              error && selectedGenre === genre && genreStyles.genreOptionError,
             ]}
           >
             <Text
               style={[
-                styles.genreOptionText,
-                selectedGenre === genre && styles.genreOptionTextSelected,
+                genreStyles.genreOptionText,
+                selectedGenre === genre && genreStyles.genreOptionTextSelected,
               ]}
             >
               {genre}
@@ -239,7 +412,7 @@ const GenreSelector: React.FC<{
           </TouchableOpacity>
         ))}
       </ScrollView>
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error && <Text style={genreStyles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -251,6 +424,7 @@ export default function EditProfileScreen() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const { colors } = useTheme();
 
   // Load existing profile or use defaults
   useEffect(() => {
@@ -392,12 +566,75 @@ export default function EditProfileScreen() {
     formData.email &&
     formData.genre;
 
+  const mainStyles = StyleSheet.create({
+    bg: { flex: 1 },
+    container: { flex: 1, paddingHorizontal: 20, paddingTop: 10 },
+    header: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      paddingBottom: 20,
+    },
+    backButton: {
+      paddingVertical: 8,
+      paddingHorizontal: 4,
+    },
+    backButtonText: {
+      color: colors.primary,
+      fontSize: 18,
+      fontWeight: "600",
+    },
+    headerTitle: {
+      color: colors.text,
+      fontSize: 24,
+      fontWeight: "600",
+    },
+    headerSpacer: {
+      width: 60,
+    },
+    scrollArea: {
+      paddingBottom: 120,
+    },
+    formContainer: {
+      marginBottom: 30,
+    },
+    saveButton: {
+      width: "100%",
+      marginBottom: 20,
+    },
+    saveButtonGradient: {
+      paddingVertical: 16,
+      borderRadius: 25,
+      alignItems: "center",
+    },
+    saveButtonDisabled: {
+      opacity: 0.6,
+    },
+    saveButtonText: {
+      color: colors.text,
+      fontSize: 18,
+      fontWeight: "700",
+    },
+    saveButtonTextDisabled: {
+      color: colors.textSecondary,
+    },
+    loadingContainer: {
+      flex: 1,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    loadingText: {
+      color: colors.text,
+      fontSize: 16,
+    },
+  });
+
   if (isLoading) {
     return (
-      <LinearGradient colors={["#0d0d0d", "#121212"]} style={styles.bg}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading profile...</Text>
+      <LinearGradient colors={[colors.background, colors.surface]} style={mainStyles.bg}>
+        <SafeAreaView style={mainStyles.container}>
+          <View style={mainStyles.loadingContainer}>
+            <Text style={mainStyles.loadingText}>Loading profile...</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -405,33 +642,34 @@ export default function EditProfileScreen() {
   }
 
   return (
-    <LinearGradient colors={["#0d0d0d", "#121212"]} style={styles.bg}>
-      <SafeAreaView style={styles.container}>
+    <LinearGradient colors={[colors.background, colors.surface]} style={mainStyles.bg}>
+      <SafeAreaView style={mainStyles.container}>
         {/* Header */}
-        <View style={styles.header}>
+        <View style={mainStyles.header}>
           <TouchableOpacity
             onPress={() => router.back()}
-            style={styles.backButton}
+            style={mainStyles.backButton}
           >
-            <Text style={styles.backButtonText}>‹ Back</Text>
+            <Text style={mainStyles.backButtonText}>‹ Back</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Edit Profile</Text>
-          <View style={styles.headerSpacer} />
+          <Text style={mainStyles.headerTitle}>Edit Profile</Text>
+          <View style={mainStyles.headerSpacer} />
         </View>
 
         <ScrollView
-          contentContainerStyle={styles.scrollArea}
+          contentContainerStyle={mainStyles.scrollArea}
           showsVerticalScrollIndicator={false}
         >
           {/* Profile Preview at Top */}
           <ProfilePreview
             formData={formData}
             errors={errors}
-            onChangeAvatar={handleChangeAvatar} // Pass the avatar change handler
+            onChangeAvatar={handleChangeAvatar}
+            colors={colors}
           />
 
           {/* Form Fields */}
-          <View style={styles.formContainer}>
+          <View style={mainStyles.formContainer}>
             <FieldInput
               label="Username *"
               value={formData.username}
@@ -439,6 +677,7 @@ export default function EditProfileScreen() {
               placeholder="Enter your username"
               error={errors.username}
               maxLength={20}
+              colors={colors}
             />
 
             <FieldInput
@@ -448,6 +687,7 @@ export default function EditProfileScreen() {
               placeholder="How should people see your name?"
               error={errors.displayName}
               maxLength={30}
+              colors={colors}
             />
 
             <FieldInput
@@ -457,12 +697,14 @@ export default function EditProfileScreen() {
               placeholder="Enter your email address"
               error={errors.email}
               keyboardType="email-address"
+              colors={colors}
             />
 
             <GenreSelector
               selectedGenre={formData.genre}
               onSelectGenre={(genre) => handleFieldUpdate("genre", genre)}
               error={errors.genre}
+              colors={colors}
             />
 
             <FieldInput
@@ -473,29 +715,30 @@ export default function EditProfileScreen() {
               error={errors.bio}
               multiline={true}
               maxLength={150}
+              colors={colors}
             />
           </View>
 
           {/* Save Button */}
           <TouchableOpacity
             onPress={handleSave}
-            style={[styles.saveButton, (!isFormValid || isSaving) && styles.saveButtonDisabled]}
+            style={[mainStyles.saveButton, (!isFormValid || isSaving) && mainStyles.saveButtonDisabled]}
             disabled={!isFormValid || isSaving}
           >
             <LinearGradient
               colors={
                 isFormValid && !isSaving
-                  ? ["#1DB954", "#1ed760"]
-                  : ["#535353", "#535353"]
+                  ? [colors.primary, colors.secondary]
+                  : [colors.textSecondary, colors.textSecondary]
               }
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
-              style={styles.saveButtonGradient}
+              style={mainStyles.saveButtonGradient}
             >
               <Text
                 style={[
-                  styles.saveButtonText,
-                  (!isFormValid || isSaving) && styles.saveButtonTextDisabled,
+                  mainStyles.saveButtonText,
+                  (!isFormValid || isSaving) && mainStyles.saveButtonTextDisabled,
                 ]}
               >
                 {isSaving ? "Saving..." : "Save Profile"}
@@ -510,211 +753,3 @@ export default function EditProfileScreen() {
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: { flex: 1, paddingHorizontal: 20, paddingTop: 10 },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingBottom: 20,
-  },
-  backButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 4,
-  },
-  backButtonText: {
-    color: "#1DB954",
-    fontSize: 18,
-    fontWeight: "600",
-  },
-  headerTitle: {
-    color: "#fff",
-    fontSize: 24,
-    fontWeight: "600",
-  },
-  headerSpacer: {
-    width: 60,
-  },
-  scrollArea: {
-    paddingBottom: 120,
-  },
-  previewContainer: {
-    backgroundColor: "#1a1a1a",
-    borderRadius: 12,
-    padding: 20,
-    marginBottom: 24,
-    borderWidth: 1,
-    borderColor: "#2a2a2a",
-  },
-  profilePreview: {
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  avatarContainer: {
-    position: "relative",
-  },
-  previewAvatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginRight: 20,
-  },
-  changeAvatarOverlay: {
-    position: "absolute",
-    bottom: 0,
-    right: 20,
-    backgroundColor: "rgba(0, 0, 0, 0.6)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  changeAvatarText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  previewInfo: {
-    flex: 1,
-  },
-  previewName: {
-    color: "#fff",
-    fontSize: 20,
-    fontWeight: "600",
-    marginBottom: 4,
-  },
-  previewUsername: {
-    color: "#9a9a9a",
-    fontSize: 16,
-    marginBottom: 4,
-  },
-  previewEmail: {
-    color: "#9a9a9a",
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  previewError: {
-    color: "#f15e6c",
-  },
-  genreChip: {
-    backgroundColor: "#1DB954",
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-    borderRadius: 12,
-    alignSelf: "flex-start",
-    marginBottom: 8,
-  },
-  genreText: {
-    color: "#000",
-    fontSize: 12,
-    fontWeight: "600",
-  },
-  previewBio: {
-    color: "#b3b3b3",
-    fontSize: 14,
-    fontStyle: "italic",
-    lineHeight: 18,
-  },
-  formContainer: {
-    marginBottom: 30,
-  },
-  fieldContainer: {
-    marginBottom: 20,
-  },
-  fieldLabel: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
-    marginBottom: 8,
-  },
-  fieldInput: {
-    backgroundColor: "#2a2a2a",
-    color: "#fff",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 8,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#3a3a3a",
-  },
-  multilineInput: {
-    height: 80,
-    textAlignVertical: "top",
-  },
-  inputError: {
-    borderColor: "#8b1d1d",
-    backgroundColor: "#1a0f0f",
-  },
-  inputFocused: {
-    borderColor: "#1DB954",
-  },
-  characterCount: {
-    color: "#9a9a9a",
-    fontSize: 12,
-    textAlign: "right",
-    marginTop: 4,
-  },
-  errorText: {
-    color: "#f15e6c",
-    fontSize: 12,
-    marginTop: 4,
-  },
-  genreScrollContainer: {
-    gap: 8,
-    paddingRight: 20,
-  },
-  genreOption: {
-    backgroundColor: "#2a2a2a",
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 20,
-    borderWidth: 1,
-    borderColor: "#3a3a3a",
-  },
-  genreOptionSelected: {
-    backgroundColor: "#1DB954",
-    borderColor: "#22c55e",
-  },
-  genreOptionError: {
-    borderColor: "#8b1d1d",
-  },
-  genreOptionText: {
-    color: "#fff",
-    fontSize: 14,
-    fontWeight: "500",
-  },
-  genreOptionTextSelected: {
-    color: "#000",
-    fontWeight: "600",
-  },
-  saveButton: {
-    width: "100%",
-    marginBottom: 20,
-  },
-  saveButtonGradient: {
-    paddingVertical: 16,
-    borderRadius: 25,
-    alignItems: "center",
-  },
-  saveButtonDisabled: {
-    opacity: 0.6,
-  },
-  saveButtonText: {
-    color: "#fff",
-    fontSize: 18,
-    fontWeight: "700",
-  },
-  saveButtonTextDisabled: {
-    color: "#b3b3b3",
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    color: "#fff",
-    fontSize: 16,
-  },
-});

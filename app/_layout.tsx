@@ -7,11 +7,12 @@ import NetInfo from "@react-native-community/netinfo";
 import { Provider } from "react-redux";
 import { StatusBar } from "expo-status-bar";
 import { store } from "./store/store";
-import { ThemeProvider, useTheme } from "./context/ThemeContext"; // ✅ import ThemeProvider + hook
+import { ThemeProvider } from "../components/ThemeProvider";
+import { useTheme } from "./hooks/useTheme";
 
 // Theme-aware loading component
 const ThemedLoadingScreen = () => {
-  const { colors, darkMode } = useTheme();
+  const { colors, isDark } = useTheme();
 
   return (
     <View
@@ -22,8 +23,8 @@ const ThemedLoadingScreen = () => {
         backgroundColor: colors.background,
       }}
     >
-      <ActivityIndicator size="large" color={colors.text} />
-      <StatusBar style={darkMode ? "light" : "dark"} />
+      <ActivityIndicator size="large" color={colors.primary} />
+      <StatusBar style={isDark ? "light" : "dark"} />
     </View>
   );
 };
@@ -33,7 +34,7 @@ const RootLayoutContent = () => {
   const [loading, setLoading] = React.useState(true);
   const router = useRouter();
   const segments = useSegments();
-  const { colors, darkMode } = useTheme();
+  const { colors, isDark } = useTheme();
 
   React.useEffect(() => {
     const restoreState = async () => {
@@ -73,7 +74,7 @@ const RootLayoutContent = () => {
 
   return (
     <>
-      <StatusBar style={darkMode ? "light" : "dark"} />
+      <StatusBar style={isDark ? "light" : "dark"} />
       <Stack
         initialRouteName="login"
         screenOptions={{
@@ -111,6 +112,13 @@ const RootLayoutContent = () => {
         />
         <Stack.Screen
           name="settings"
+          options={{
+            headerTintColor: colors.primary,
+            headerStyle: { backgroundColor: "transparent" },
+          }}
+        />
+        <Stack.Screen
+          name="theme-showcase"
           options={{
             headerTintColor: colors.primary,
             headerStyle: { backgroundColor: "transparent" },

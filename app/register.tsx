@@ -1,6 +1,6 @@
 import { FontAwesome } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
-import { LinearGradient } from "expo-linear-gradient"; // ✅ use gradient
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -11,6 +11,7 @@ import {
     TouchableOpacity,
     View,
 } from "react-native";
+import { useTheme } from "./hooks/useTheme";
 
 export default function RegisterScreen() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export default function RegisterScreen() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [gender, setGender] = useState<"male" | "female" | null>(null);
+  const { colors } = useTheme();
 
   const handleRegister = () => {
     Haptics.selectionAsync();
@@ -25,9 +27,140 @@ export default function RegisterScreen() {
     router.push("/login");
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      paddingHorizontal: 30,
+      paddingTop: 60,
+    },
+    headerRow: {
+      flexDirection: "row",
+      alignItems: "center",
+      marginBottom: 40,
+    },
+    logo: {
+      width: 50,
+      height: 50,
+      marginRight: 15,
+      resizeMode: "contain",
+    },
+    headerText: {
+      fontSize: 24,
+      color: colors.text,
+      fontWeight: "600",
+    },
+    input: {
+      width: "100%",
+      backgroundColor: colors.surface,
+      color: colors.text,
+      borderRadius: 10,
+      padding: 15,
+      marginBottom: 15,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    sectionLabel: {
+      color: colors.text,
+      fontSize: 16,
+      fontWeight: "600",
+      marginBottom: 10,
+      marginTop: 10,
+    },
+    dobRow: {
+      flexDirection: "row",
+      gap: 10,
+      marginBottom: 20,
+    },
+    dobInput: {
+      flex: 1,
+      backgroundColor: colors.surface,
+      color: colors.text,
+      borderRadius: 10,
+      padding: 15,
+      borderWidth: 1,
+      borderColor: colors.border,
+      textAlign: "center",
+    },
+    flexInput: {
+      flex: 1,
+    },
+    genderRow: {
+      flexDirection: "row",
+      gap: 15,
+      marginBottom: 30,
+    },
+    genderButton: {
+      flex: 1,
+      padding: 15,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.surface,
+      alignItems: "center",
+    },
+    genderSelected: {
+      borderColor: colors.primary,
+      backgroundColor: colors.primary,
+    },
+    genderText: {
+      color: colors.text,
+      fontWeight: "500",
+    },
+    genderTextSelected: {
+      color: colors.text,
+      fontWeight: "600",
+    },
+    button: {
+      width: "100%",
+      padding: 15,
+      borderRadius: 30,
+      alignItems: "center",
+      marginBottom: 20,
+    },
+    buttonText: {
+      color: colors.text,
+      fontWeight: "600",
+      fontSize: 16,
+    },
+    loginLink: {
+      textAlign: "center",
+      color: colors.textSecondary,
+    },
+    loginLinkText: {
+      color: colors.primary,
+      fontWeight: "600",
+    },
+    smallText: {
+      color: colors.textSecondary,
+      marginBottom: 10,
+      textAlign: "center",
+    },
+    socialRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      gap: 30,
+      marginBottom: 25,
+    },
+    socialCircle: {
+      width: 55,
+      height: 55,
+      borderRadius: 30,
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    loginRow: {
+      flexDirection: "row",
+      justifyContent: "center",
+      marginTop: 20,
+    },
+    loginText: {
+      color: colors.textSecondary,
+    },
+  });
+
   return (
     <LinearGradient
-      colors={["#0d0d0d", "#1a1a1a", "#000000"]}
+      colors={[colors.background, colors.surface, colors.background]}
       start={{ x: 0, y: 0 }}
       end={{ x: 1, y: 1 }}
       style={styles.container}
@@ -45,14 +178,14 @@ export default function RegisterScreen() {
       <TextInput
         style={styles.input}
         placeholder="Email"
-        placeholderTextColor="#777"
+        placeholderTextColor={colors.textSecondary}
         value={email}
         onChangeText={setEmail}
       />
       <TextInput
         style={styles.input}
         placeholder="Password"
-        placeholderTextColor="#777"
+        placeholderTextColor={colors.textSecondary}
         secureTextEntry
         value={password}
         onChangeText={setPassword}
@@ -60,7 +193,7 @@ export default function RegisterScreen() {
       <TextInput
         style={styles.input}
         placeholder="Confirm Password"
-        placeholderTextColor="#777"
+        placeholderTextColor={colors.textSecondary}
         secureTextEntry
         value={confirmPassword}
         onChangeText={setConfirmPassword}
@@ -72,21 +205,21 @@ export default function RegisterScreen() {
         <TextInput
           style={[styles.dobInput, styles.flexInput]}
           placeholder="DD"
-          placeholderTextColor="#777"
+          placeholderTextColor={colors.textSecondary}
           keyboardType="numeric"
           maxLength={2}
         />
         <TextInput
           style={[styles.dobInput, styles.flexInput]}
           placeholder="MM"
-          placeholderTextColor="#777"
+          placeholderTextColor={colors.textSecondary}
           keyboardType="numeric"
           maxLength={2}
         />
         <TextInput
           style={[styles.dobInput, styles.flexInput]}
           placeholder="YYYY"
-          placeholderTextColor="#777"
+          placeholderTextColor={colors.textSecondary}
           keyboardType="numeric"
           maxLength={4}
         />
@@ -132,7 +265,7 @@ export default function RegisterScreen() {
       {/* Sign Up Button */}
       <TouchableOpacity onPress={handleRegister} style={{ width: "100%" }}>
         <LinearGradient
-          colors={["#1DB954", "#1ed760"]}
+          colors={[colors.primary, colors.secondary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.button}
@@ -146,18 +279,18 @@ export default function RegisterScreen() {
       <View style={styles.socialRow}>
         <TouchableOpacity>
           <LinearGradient
-            colors={["#1a1a1a", "#000"]}
+            colors={[colors.surface, colors.background]}
             style={styles.socialCircle}
           >
-            <FontAwesome name="facebook" size={26} color="#fff" />
+            <FontAwesome name="facebook" size={26} color={colors.text} />
           </LinearGradient>
         </TouchableOpacity>
         <TouchableOpacity>
           <LinearGradient
-            colors={["#1a1a1a", "#000"]}
+            colors={[colors.surface, colors.background]}
             style={styles.socialCircle}
           >
-            <FontAwesome name="google" size={26} color="#fff" />
+            <FontAwesome name="google" size={26} color={colors.text} />
           </LinearGradient>
         </TouchableOpacity>
       </View>
@@ -166,144 +299,10 @@ export default function RegisterScreen() {
       <View style={styles.loginRow}>
         <Text style={styles.loginText}>Already have an account? </Text>
         <TouchableOpacity onPress={() => router.push("/login")}>
-          <Text style={styles.loginLink}>Sign in</Text>
+          <Text style={styles.loginLinkText}>Sign in</Text>
         </TouchableOpacity>
       </View>
     </LinearGradient>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
-    paddingHorizontal: 30,
-    alignItems: "center",
-  },
-  headerRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 30,
-  },
-  logo: {
-    width: 50,
-    height: 50,
-    resizeMode: "contain",
-    marginRight: 10,
-  },
-  headerText: {
-    fontSize: 26,
-    fontWeight: "600",
-    color: "#fff",
-  },
-  input: {
-    width: "100%",
-    backgroundColor: "#121212",
-    color: "#fff",
-    borderRadius: 10,
-    padding: 15,
-    marginBottom: 15,
-    borderWidth: 1,
-    borderColor: "#1f1f1f",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.5,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  sectionLabel: {
-    color: "#1DB954",
-    fontWeight: "600",
-    alignSelf: "flex-start",
-    marginBottom: 8,
-    marginTop: 5,
-  },
-  dobRow: {
-    flexDirection: "row",
-    width: "100%",
-    marginBottom: 20,
-  },
-  dobInput: {
-    backgroundColor: "#121212",
-    color: "#fff",
-    borderRadius: 8,
-    padding: 12,
-    textAlign: "center",
-    borderWidth: 1,
-    borderColor: "#1f1f1f",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.4,
-    shadowRadius: 3,
-    elevation: 4,
-  },
-  flexInput: {
-    flex: 1,
-    marginHorizontal: 5,
-  },
-  genderRow: {
-    flexDirection: "row",
-    width: "100%",
-    marginBottom: 25,
-  },
-  genderButton: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "#1DB954",
-    paddingVertical: 12,
-    borderRadius: 20,
-    backgroundColor: "transparent",
-    alignItems: "center",
-    marginHorizontal: 5,
-  },
-  genderSelected: {
-    backgroundColor: "rgba(29,185,84,0.25)",
-  },
-  genderText: {
-    color: "#1DB954",
-    fontWeight: "600",
-  },
-  genderTextSelected: {
-    color: "#fff",
-  },
-  button: {
-    width: "100%",
-    padding: 15,
-    borderRadius: 30,
-    alignItems: "center",
-    marginBottom: 25,
-  },
-  buttonText: {
-    color: "#fff",
-    fontWeight: "600",
-    fontSize: 16,
-  },
-  smallText: {
-    color: "#aaa",
-    marginBottom: 10,
-  },
-  socialRow: {
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 30,
-    marginBottom: 25,
-  },
-  socialCircle: {
-    width: 55,
-    height: 55,
-    borderRadius: 30,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  loginRow: {
-    flexDirection: "row",
-    marginTop: 15,
-  },
-  loginText: {
-    color: "#777",
-  },
-  loginLink: {
-    color: "#1DB954",
-    fontWeight: "600",
-  },
-});

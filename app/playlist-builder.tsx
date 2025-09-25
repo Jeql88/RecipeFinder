@@ -14,6 +14,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
 import { playlistStorage } from "../app/utils/storage";
 import NavBar from "../components/BottomNav";
+import { useTheme } from "./hooks/useTheme";
 
 // Types
 interface Song {
@@ -96,7 +97,7 @@ function playlistReducer(state: PlaylistState, action: PlaylistAction): Playlist
 }
 
 // SongInput Component
-const SongInput: React.FC<{ onAdd: (song: Song) => void }> = ({ onAdd }) => {
+const SongInput: React.FC<{ onAdd: (song: Song) => void; colors: any }> = ({ onAdd, colors }) => {
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
 
@@ -118,61 +119,118 @@ const SongInput: React.FC<{ onAdd: (song: Song) => void }> = ({ onAdd }) => {
     setArtist("");
   };
 
+  const songInputStyles = StyleSheet.create({
+    songInputContainer: { marginBottom: 12 },
+    songInput: {
+      backgroundColor: colors.surface,
+      color: colors.text,
+      paddingHorizontal: 16,
+      paddingVertical: 12,
+      borderRadius: 20,
+      fontSize: 14,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 8,
+    },
+    addButton: {
+      backgroundColor: colors.primary,
+      paddingVertical: 12,
+      borderRadius: 20,
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: colors.primary,
+    },
+    addButtonText: { color: colors.text, fontWeight: "600", fontSize: 14 },
+  });
+
   return (
-    <View style={styles.songInputContainer}>
+    <View style={songInputStyles.songInputContainer}>
       <TextInput
         value={title}
         onChangeText={setTitle}
         placeholder="Song title"
-        placeholderTextColor="#9a9a9a"
-        style={styles.songInput}
+        placeholderTextColor={colors.textSecondary}
+        style={songInputStyles.songInput}
         returnKeyType="next"
       />
       <TextInput
         value={artist}
         onChangeText={setArtist}
         placeholder="Artist"
-        placeholderTextColor="#9a9a9a"
-        style={styles.songInput}
+        placeholderTextColor={colors.textSecondary}
+        style={songInputStyles.songInput}
         returnKeyType="done"
         onSubmitEditing={handleAdd}
       />
-      <TouchableOpacity onPress={handleAdd} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add</Text>
+      <TouchableOpacity onPress={handleAdd} style={songInputStyles.addButton}>
+        <Text style={songInputStyles.addButtonText}>Add</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 // SongItem Component
-const SongItem: React.FC<{ song: Song; onRemove: (id: string) => void }> = ({ song, onRemove }) => {
+const SongItem: React.FC<{ song: Song; onRemove: (id: string) => void; colors: any }> = ({ song, onRemove, colors }) => {
+  const songItemStyles = StyleSheet.create({
+    songItem: {
+      backgroundColor: colors.surface,
+      padding: 12,
+      borderRadius: 8,
+      marginBottom: 8,
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "space-between",
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    songInfo: { flex: 1, marginRight: 12 },
+    songTitle: { color: colors.text, fontSize: 16, fontWeight: "600", marginBottom: 2 },
+    songArtist: { color: colors.textSecondary, fontSize: 14 },
+    removeButton: {
+      width: 24,
+      height: 24,
+      backgroundColor: colors.error,
+      borderRadius: 12,
+      justifyContent: "center",
+      alignItems: "center",
+    },
+    removeButtonText: { color: colors.text, fontSize: 16, fontWeight: "600" },
+  });
+
   return (
-    <View style={styles.songItem}>
-      <View style={styles.songInfo}>
-        <Text style={styles.songTitle} numberOfLines={1}>
+    <View style={songItemStyles.songItem}>
+      <View style={songItemStyles.songInfo}>
+        <Text style={songItemStyles.songTitle} numberOfLines={1}>
           {song.title}
         </Text>
-        <Text style={styles.songArtist} numberOfLines={1}>
+        <Text style={songItemStyles.songArtist} numberOfLines={1}>
           {song.artist}
         </Text>
       </View>
       <TouchableOpacity
         onPress={() => onRemove(song.id)}
-        style={styles.removeButton}
+        style={songItemStyles.removeButton}
       >
-        <Text style={styles.removeButtonText}>×</Text>
+        <Text style={songItemStyles.removeButtonText}>×</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 // SongList Component
-const SongList: React.FC<{ songs: Song[]; onRemove: (id: string) => void }> = ({ songs, onRemove }) => {
+const SongList: React.FC<{ songs: Song[]; onRemove: (id: string) => void; colors: any }> = ({ songs, onRemove, colors }) => {
+  const songListStyles = StyleSheet.create({
+    emptyState: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 40 },
+    emptyStateText: { color: colors.text, fontSize: 18, fontWeight: "600", marginBottom: 8 },
+    emptyStateSubtext: { color: colors.textSecondary, fontSize: 14 },
+    songListContainer: { paddingVertical: 4 },
+  });
+
   if (songs.length === 0) {
     return (
-      <View style={styles.emptyState}>
-        <Text style={styles.emptyStateText}>No songs added yet</Text>
-        <Text style={styles.emptyStateSubtext}>Add some songs to get started!</Text>
+      <View style={songListStyles.emptyState}>
+        <Text style={songListStyles.emptyStateText}>No songs added yet</Text>
+        <Text style={songListStyles.emptyStateSubtext}>Add some songs to get started!</Text>
       </View>
     );
   }
@@ -181,9 +239,9 @@ const SongList: React.FC<{ songs: Song[]; onRemove: (id: string) => void }> = ({
     <FlatList
       data={songs}
       keyExtractor={(item) => item.id}
-      renderItem={({ item }) => <SongItem song={item} onRemove={onRemove} />}
+      renderItem={({ item }) => <SongItem song={item} onRemove={onRemove} colors={colors} />}
       showsVerticalScrollIndicator={false}
-      contentContainerStyle={styles.songListContainer}
+      contentContainerStyle={songListStyles.songListContainer}
     />
   );
 };
@@ -194,6 +252,7 @@ export default function PlaylistBuilderScreen() {
   const [playlistName, setPlaylistName] = useState("");
   const [savedPlaylists, setSavedPlaylists] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { colors } = useTheme();
 
   // Load stored playlists
   useEffect(() => {
@@ -374,12 +433,83 @@ export default function PlaylistBuilderScreen() {
     );
   };
 
+  const mainStyles = StyleSheet.create({
+    bg: { flex: 1 },
+    container: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
+    header: { color: colors.text, fontSize: 28, fontWeight: "600", marginBottom: 16 },
+    playlistInput: {
+      backgroundColor: colors.surface,
+      color: colors.text,
+      paddingHorizontal: 16,
+      paddingVertical: 14,
+      borderRadius: 25,
+      fontSize: 16,
+      borderWidth: 1,
+      borderColor: colors.border,
+      marginBottom: 16,
+    },
+    controls: { width: "100%", marginBottom: 16 },
+    actionRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 12, gap: 8 },
+    actionBtn: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 12,
+      paddingVertical: 10,
+      borderRadius: 20,
+      flex: 1,
+      alignItems: "center",
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    actionText: { color: colors.text, fontWeight: "600", fontSize: 12 },
+    warnBtn: { backgroundColor: colors.error, borderColor: colors.error },
+    greyBtn: { backgroundColor: colors.textSecondary, borderColor: colors.textSecondary },
+    disabled: { opacity: 0.3 },
+    saveBtn: { backgroundColor: colors.primary, borderColor: colors.primary, marginTop: 8 },
+    scrollArea: { paddingVertical: 8, paddingBottom: 120 },
+    playlistInfo: {
+      marginTop: 16,
+      padding: 12,
+      backgroundColor: colors.surface,
+      borderRadius: 8,
+      borderWidth: 1,
+      borderColor: colors.border
+    },
+    playlistInfoText: { color: colors.primary, fontSize: 14, textAlign: "center", fontWeight: "500" },
+    savedPlaylistsContainer: { marginTop: 16, paddingBottom: 8 },
+    savedPlaylistsHeader: { color: colors.text, fontWeight: "600", marginBottom: 8, fontSize: 16 },
+    savedPlaylistsList: { gap: 8, paddingRight: 20 },
+    savedPlaylistItem: { flexDirection: "row", alignItems: "center" },
+    savedPlaylistButton: {
+      backgroundColor: colors.surface,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 16,
+      borderWidth: 1,
+      borderColor: colors.border
+    },
+    activePlaylistButton: { backgroundColor: colors.primary, borderColor: colors.primary },
+    savedPlaylistText: { color: colors.text, fontSize: 14, fontWeight: "500" },
+    activePlaylistText: { color: colors.text },
+    deleteButton: {
+      marginLeft: 4,
+      width: 20,
+      height: 20,
+      backgroundColor: colors.error,
+      borderRadius: 10,
+      justifyContent: "center",
+      alignItems: "center"
+    },
+    deleteButtonText: { color: colors.text, fontSize: 12, fontWeight: "600" },
+    loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
+    loadingText: { color: colors.text, fontSize: 16 },
+  });
+
   if (isLoading) {
     return (
-      <LinearGradient colors={["#0d0d0d", "#121212"]} style={styles.bg}>
-        <SafeAreaView style={styles.container}>
-          <View style={styles.loadingContainer}>
-            <Text style={styles.loadingText}>Loading playlists...</Text>
+      <LinearGradient colors={[colors.background, colors.surface]} style={mainStyles.bg}>
+        <SafeAreaView style={mainStyles.container}>
+          <View style={mainStyles.loadingContainer}>
+            <Text style={mainStyles.loadingText}>Loading playlists...</Text>
           </View>
         </SafeAreaView>
       </LinearGradient>
@@ -387,72 +517,72 @@ export default function PlaylistBuilderScreen() {
   }
 
   return (
-    <LinearGradient colors={["#0d0d0d", "#121212"]} style={styles.bg}>
-      <SafeAreaView style={styles.container}>
-        <Text style={styles.header}>Create Playlist</Text>
+    <LinearGradient colors={[colors.background, colors.surface]} style={mainStyles.bg}>
+      <SafeAreaView style={mainStyles.container}>
+        <Text style={mainStyles.header}>Create Playlist</Text>
         
         <TextInput
           value={playlistName}
           onChangeText={setPlaylistName}
           placeholder="Enter playlist name"
-          placeholderTextColor="#9a9a9a"
-          style={styles.playlistInput}
+          placeholderTextColor={colors.textSecondary}
+          style={mainStyles.playlistInput}
           returnKeyType="done"
         />
 
-        <View style={styles.controls}>
-          <SongInput onAdd={handleAdd} />
+        <View style={mainStyles.controls}>
+          <SongInput onAdd={handleAdd} colors={colors} />
           
-          <View style={styles.actionRow}>
+          <View style={mainStyles.actionRow}>
             <TouchableOpacity
               onPress={handleUndo}
               disabled={state.past.length === 0}
-              style={[styles.actionBtn, state.past.length === 0 && styles.disabled]}
+              style={[mainStyles.actionBtn, state.past.length === 0 && mainStyles.disabled]}
             >
-              <Text style={styles.actionText}>Undo</Text>
+              <Text style={mainStyles.actionText}>Undo</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               onPress={handleRedo}
               disabled={state.future.length === 0}
-              style={[styles.actionBtn, state.future.length === 0 && styles.disabled]}
+              style={[mainStyles.actionBtn, state.future.length === 0 && mainStyles.disabled]}
             >
-              <Text style={styles.actionText}>Redo</Text>
+              <Text style={mainStyles.actionText}>Redo</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               onPress={handleClear}
-              style={[styles.actionBtn, styles.warnBtn]}
+              style={[mainStyles.actionBtn, mainStyles.warnBtn]}
             >
-              <Text style={styles.actionText}>Clear</Text>
+              <Text style={mainStyles.actionText}>Clear</Text>
             </TouchableOpacity>
             
             <TouchableOpacity
               onPress={handleClearCache}
-              style={[styles.actionBtn, styles.greyBtn]}
+              style={[mainStyles.actionBtn, mainStyles.greyBtn]}
             >
-              <Text style={styles.actionText}>Cache</Text>
+              <Text style={mainStyles.actionText}>Cache</Text>
             </TouchableOpacity>
           </View>
 
           <TouchableOpacity
             onPress={handleSavePlaylist}
-            style={[styles.actionBtn, styles.saveBtn]}
+            style={[mainStyles.actionBtn, mainStyles.saveBtn]}
             disabled={!playlistName.trim() || state.present.length === 0}
           >
-            <Text style={styles.actionText}>Save Playlist</Text>
+            <Text style={mainStyles.actionText}>Save Playlist</Text>
           </TouchableOpacity>
         </View>
 
         <ScrollView 
-          contentContainerStyle={styles.scrollArea} 
+          contentContainerStyle={mainStyles.scrollArea} 
           showsVerticalScrollIndicator={false}
         >
-          <SongList songs={state.present} onRemove={handleRemove} />
+          <SongList songs={state.present} onRemove={handleRemove} colors={colors} />
           
           {playlistName.trim() && state.present.length > 0 && (
-            <View style={styles.playlistInfo}>
-              <Text style={styles.playlistInfoText}>
+            <View style={mainStyles.playlistInfo}>
+              <Text style={mainStyles.playlistInfoText}>
                 "{playlistName}" • {state.present.length} songs
               </Text>
             </View>
@@ -460,34 +590,34 @@ export default function PlaylistBuilderScreen() {
         </ScrollView>
 
         {savedPlaylists.length > 0 && (
-          <View style={styles.savedPlaylistsContainer}>
-            <Text style={styles.savedPlaylistsHeader}>Saved Playlists:</Text>
+          <View style={mainStyles.savedPlaylistsContainer}>
+            <Text style={mainStyles.savedPlaylistsHeader}>Saved Playlists:</Text>
             <ScrollView 
               horizontal 
               showsHorizontalScrollIndicator={false}
-              contentContainerStyle={styles.savedPlaylistsList}
+              contentContainerStyle={mainStyles.savedPlaylistsList}
             >
               {savedPlaylists.map((playlist) => (
-                <View key={playlist} style={styles.savedPlaylistItem}>
+                <View key={playlist} style={mainStyles.savedPlaylistItem}>
                   <TouchableOpacity
                     onPress={() => handleLoadPlaylist(playlist)}
                     style={[
-                      styles.savedPlaylistButton,
-                      playlistName === playlist && styles.activePlaylistButton
+                      mainStyles.savedPlaylistButton,
+                      playlistName === playlist && mainStyles.activePlaylistButton
                     ]}
                   >
                     <Text style={[
-                      styles.savedPlaylistText,
-                      playlistName === playlist && styles.activePlaylistText
+                      mainStyles.savedPlaylistText,
+                      playlistName === playlist && mainStyles.activePlaylistText
                     ]}>
                       {playlist}
                     </Text>
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleDeletePlaylist(playlist)}
-                    style={styles.deleteButton}
+                    style={mainStyles.deleteButton}
                   >
-                    <Text style={styles.deleteButtonText}>×</Text>
+                    <Text style={mainStyles.deleteButtonText}>×</Text>
                   </TouchableOpacity>
                 </View>
               ))}
@@ -495,127 +625,8 @@ export default function PlaylistBuilderScreen() {
           </View>
         )}
       </SafeAreaView>
-            {/* Bottom Nav */}
-            <NavBar />
+      {/* Bottom Nav */}
+      <NavBar />
     </LinearGradient>
   );
 }
-
-const styles = StyleSheet.create({
-  bg: { flex: 1 },
-  container: { flex: 1, paddingHorizontal: 20, paddingTop: 20 },
-  header: { color: "#fff", fontSize: 28, fontWeight: "600", marginBottom: 16 },
-  playlistInput: {
-    backgroundColor: "#2a2a2a",
-    color: "#fff",
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    borderRadius: 25,
-    fontSize: 16,
-    borderWidth: 1,
-    borderColor: "#3a3a3a",
-    marginBottom: 16,
-  },
-  controls: { width: "100%", marginBottom: 16 },
-  songInputContainer: { marginBottom: 12 },
-  songInput: {
-    backgroundColor: "#2a2a2a",
-    color: "#fff",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 20,
-    fontSize: 14,
-    borderWidth: 1,
-    borderColor: "#3a3a3a",
-    marginBottom: 8,
-  },
-  addButton: {
-    backgroundColor: "#1DB954",
-    paddingVertical: 12,
-    borderRadius: 20,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#22c55e",
-  },
-  addButtonText: { color: "#fff", fontWeight: "600", fontSize: 14 },
-  actionRow: { flexDirection: "row", justifyContent: "space-between", marginTop: 12, gap: 8 },
-  actionBtn: {
-    backgroundColor: "#1f1f1f",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    borderRadius: 20,
-    flex: 1,
-    alignItems: "center",
-    borderWidth: 1,
-    borderColor: "#2a2a2a",
-  },
-  actionText: { color: "#fff", fontWeight: "600", fontSize: 12 },
-  warnBtn: { backgroundColor: "#8b1d1d", borderColor: "#a02525" },
-  greyBtn: { backgroundColor: "#2b2b2b", borderColor: "#3a3a3a" },
-  disabled: { opacity: 0.3 },
-  saveBtn: { backgroundColor: "#1DB954", borderColor: "#22c55e", marginTop: 8 },
-  scrollArea: { paddingVertical: 8, paddingBottom: 120 },
-  songListContainer: { paddingVertical: 4 },
-  songItem: {
-    backgroundColor: "#1a1a1a",
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 8,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    borderWidth: 1,
-    borderColor: "#2a2a2a",
-  },
-  songInfo: { flex: 1, marginRight: 12 },
-  songTitle: { color: "#fff", fontSize: 16, fontWeight: "600", marginBottom: 2 },
-  songArtist: { color: "#9a9a9a", fontSize: 14 },
-  removeButton: {
-    width: 24,
-    height: 24,
-    backgroundColor: "#8b1d1d",
-    borderRadius: 12,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  removeButtonText: { color: "#fff", fontSize: 16, fontWeight: "600" },
-  emptyState: { flex: 1, justifyContent: "center", alignItems: "center", paddingVertical: 40 },
-  emptyStateText: { color: "#fff", fontSize: 18, fontWeight: "600", marginBottom: 8 },
-  emptyStateSubtext: { color: "#9a9a9a", fontSize: 14 },
-  playlistInfo: {
-    marginTop: 16,
-    padding: 12,
-    backgroundColor: "#1a1a1a",
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: "#2a2a2a"
-  },
-  playlistInfoText: { color: "#1DB954", fontSize: 14, textAlign: "center", fontWeight: "500" },
-  savedPlaylistsContainer: { marginTop: 16, paddingBottom: 8 },
-  savedPlaylistsHeader: { color: "#fff", fontWeight: "600", marginBottom: 8, fontSize: 16 },
-  savedPlaylistsList: { gap: 8, paddingRight: 20 },
-  savedPlaylistItem: { flexDirection: "row", alignItems: "center" },
-  savedPlaylistButton: {
-    backgroundColor: "#2a2a2a",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "#3a3a3a"
-  },
-  activePlaylistButton: { backgroundColor: "#1DB954", borderColor: "#22c55e" },
-  savedPlaylistText: { color: "#fff", fontSize: 14, fontWeight: "500" },
-  activePlaylistText: { color: "#000" },
-  deleteButton: {
-    marginLeft: 4,
-    width: 20,
-    height: 20,
-    backgroundColor: "#8b1d1d",
-    borderRadius: 10,
-    justifyContent: "center",
-    alignItems: "center"
-  },
-  deleteButtonText: { color: "#fff", fontSize: 12, fontWeight: "600" },
-  loadingContainer: { flex: 1, justifyContent: "center", alignItems: "center" },
-  loadingText: { color: "#fff", fontSize: 16 },
-});

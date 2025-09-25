@@ -15,35 +15,21 @@ import * as Haptics from "expo-haptics";
 import { useRouter } from "expo-router";
 import NavBar from "../components/BottomNav";
 import { useSelector, useDispatch } from "react-redux";
-import {
-  toggleDarkMode,
-  toggleAnimations,
-  setDarkMode,
-} from "../store/settingsSlice";
-import { RootState } from "../store/store";
+import { RootState, AppDispatch } from "../app/store/store";
+import { 
+  setTheme, 
+  setCustomTheme, 
+  setAnimationEnabled, 
+  setAccessibilityOption,
+  createThemeBackup,
+  restoreFromBackup,
+} from "../app/store/slices/themeSlice";
+import { useTheme } from "./hooks/useTheme";
 
 export default function SettingsScreen() {
   const router = useRouter();
-  const dispatch = useDispatch();
-
-  // pull global state from Redux
-  const darkMode = useSelector((state: RootState) => state.settings.darkMode);
-  const animationsEnabled = useSelector(
-    (state: RootState) => state.settings.animationsEnabled
-  );
-
-  // derive theme colors based on darkMode
-  const colors = {
-    background: darkMode ? "#121212" : "#FFFFFF",
-    surface: darkMode ? "#181818" : "#F8F9FA",
-    card: darkMode ? "#282828" : "#FFFFFF",
-    text: darkMode ? "#FFFFFF" : "#000000",
-    textSecondary: darkMode ? "#B3B3B3" : "#6C757D",
-    border: darkMode ? "#404040" : "#E9ECEF",
-    primary: "#1DB954",
-    secondary: "#1ed760",
-    accent: "#FF6B6B",
-  };
+  const dispatch = useDispatch<AppDispatch>();
+  const { colors, currentTheme, customThemes, activeCustomThemeId, animationEnabled, accessibility, analytics } = useTheme();
 
   const styles = StyleSheet.create({
     container: { flex: 1 },
@@ -120,19 +106,61 @@ export default function SettingsScreen() {
   );
 
   // handle theme switch
-  const handleThemeSwitch = (theme: "light" | "dark") => {
+  const handleThemeSwitch = (theme: "light" | "dark" | "custom", customThemeId?: string) => {
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
-    dispatch(setDarkMode(theme === "dark"));
+    if (theme === "custom" && customThemeId) {
+      dispatch(setCustomTheme(customThemeId));
+    } else {
+      dispatch(setTheme(theme));
+    }
   };
 
   // toggle animations
   const handleToggleAnimations = () => {
-    dispatch(toggleAnimations());
+    dispatch(setAnimationEnabled(!animationEnabled));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+  };
+
+  // handle accessibility options
+  const handleAccessibilityToggle = (option: keyof typeof accessibility) => {
+    dispatch(setAccessibilityOption({ option, value: !accessibility[option] }));
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
   };
 
   const handleCreateCustomTheme = () => {
-    Alert.alert("Custom Themes", "Custom theme creation will be available soon!");
+    router.push("/theme-showcase");
+  };
+
+  const handleBackup = async () => {
+    try {
+      await dispatch(createThemeBackup());
+      Alert.alert("Success", "Theme backup created successfully");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch (error) {
+      Alert.alert("Error", "Failed to create backup");
+    }
+  };
+
+  const handleRestore = () => {
+    Alert.alert(
+      "Restore Backup",
+      "This will restore your themes from the last backup. Continue?",
+      [
+        { text: "Cancel", style: "cancel" },
+        {
+          text: "Restore",
+          onPress: async () => {
+            try {
+              await dispatch(restoreFromBackup());
+              Alert.alert("Success", "Themes restored from backup");
+              Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+            } catch (error) {
+              Alert.alert("Error", "Failed to restore from backup");
+            }
+          },
+        },
+      ]
+    );
   };
 
   return (
@@ -163,15 +191,22 @@ export default function SettingsScreen() {
             <SettingsItem
               icon="🎨"
               title="Appearance"
-              subtitle={`Current: ${darkMode ? "Dark" : "Light"}`}
+              subtitle={`Current: ${currentTheme === 'custom' ? customThemes.find(t => t.id === activeCustomThemeId)?.name || 'Custom' : currentTheme.charAt(0).toUpperCase() + currentTheme.slice(1)}`}
               rightElement={
                 <Switch
-                  value={darkMode}
-                  onValueChange={() => handleThemeSwitch(darkMode ? "light" : "dark")}
+                  value={currentTheme === 'dark' || currentTheme === 'custom'}
+                  onValueChange={() => handleThemeSwitch(currentTheme === 'dark' ? "light" : "dark")}
                   trackColor={{ false: colors.border, true: colors.primary }}
                   thumbColor={colors.card}
                 />
               }
+            />
+
+            <SettingsItem
+              icon="🎭"
+              title="Theme Showcase"
+              subtitle="Create and manage custom themes"
+              onPress={handleCreateCustomTheme}
             />
 
             <SettingsItem
@@ -180,12 +215,96 @@ export default function SettingsScreen() {
               subtitle="Theme transition animations"
               rightElement={
                 <Switch
-                  value={animationsEnabled}
+                  value={animationEnabled}
                   onValueChange={handleToggleAnimations}
                   trackColor={{ false: colors.border, true: colors.primary }}
                   thumbColor={colors.card}
                 />
               }
+            />
+
+            <SettingsItem
+              icon="♿"
+              title="High Contrast"
+              subtitle="Enhanced contrast for better visibility"
+              rightElement={
+                <Switch
+                  value={accessibility.highContrast}
+                  onValueChange={() => handleAccessibilityToggle('highContrast')}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.card}
+                />
+              }
+            />
+
+            <SettingsItem
+              icon="🔍"
+              title="Large Text"
+              subtitle="Increase text size for better readability"
+              rightElement={
+                <Switch
+                  value={accessibility.largeText}
+                  onValueChange={() => handleAccessibilityToggle('largeText')}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.card}
+                />
+              }
+            />
+
+            <SettingsItem
+              icon="🚫"
+              title="Reduce Motion"
+              subtitle="Disable animations for accessibility"
+              rightElement={
+                <Switch
+                  value={accessibility.reducedMotion}
+                  onValueChange={() => handleAccessibilityToggle('reducedMotion')}
+                  trackColor={{ false: colors.border, true: colors.primary }}
+                  thumbColor={colors.card}
+                />
+              }
+            />
+          </View>
+
+          {/* Backup & Restore Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Backup & Restore</Text>
+            
+            <SettingsItem
+              icon="💾"
+              title="Create Backup"
+              subtitle="Save current theme settings"
+              onPress={handleBackup}
+            />
+            
+            <SettingsItem
+              icon="🔄"
+              title="Restore Backup"
+              subtitle="Restore from last backup"
+              onPress={handleRestore}
+            />
+          </View>
+
+          {/* Analytics Section */}
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>Theme Analytics</Text>
+            
+            <SettingsItem
+              icon="📊"
+              title="Total Theme Switches"
+              subtitle={`${analytics.totalThemeSwitches} switches`}
+            />
+            
+            <SettingsItem
+              icon="⭐"
+              title="Most Used Theme"
+              subtitle={analytics.mostUsedTheme}
+            />
+            
+            <SettingsItem
+              icon="🎨"
+              title="Custom Themes"
+              subtitle={`${customThemes.length} themes created`}
             />
           </View>
 

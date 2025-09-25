@@ -15,7 +15,7 @@ import { useRouter } from "expo-router";
 import NavBar from "../components/BottomNav";
 import ProfileAvatar from "@/components/ProfileAvatar";
 import CustomDrawer from "@/components/CustomDrawer";
-import { useTheme } from "../app/context/ThemeContext";
+import { useTheme } from "./hooks/useTheme";
 
 type Playlist = {
   id: string;
