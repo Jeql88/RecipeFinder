@@ -85,9 +85,16 @@ This activity demonstrates:
 
 ---
 
-# React Native Activity 6 - Advanced Theme System
+# React Native Activity 7 - Advanced Theme System
 
 Implemented a sophisticated theme system with Redux Toolkit, advanced animations, custom themes, accessibility features, and analytics.
+
+<img width="327" height="722" alt="image" src="https://github.com/user-attachments/assets/ce0c7175-60df-4262-83db-3cb431fa1f5d" />
+<img width="328" height="720" alt="image" src="https://github.com/user-attachments/assets/e0df6c20-d8fd-4fc9-adbe-4e5bb1ab3753" />
+<img width="326" height="726" alt="image" src="https://github.com/user-attachments/assets/e545cf10-4b02-46de-9134-ab900b340fdf" />
+<img width="327" height="730" alt="image" src="https://github.com/user-attachments/assets/58ab1457-3ee4-41f8-86b9-ce362b16674f" />
+
+
 
 
 ---
