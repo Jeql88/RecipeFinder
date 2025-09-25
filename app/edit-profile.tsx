@@ -9,6 +9,7 @@ import {
   TextInput,
   Alert,
   Image,
+  Modal,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import * as Haptics from "expo-haptics";
@@ -17,6 +18,7 @@ import { useRouter } from "expo-router";
 import { profileStorage } from "../app/utils/storage";
 import NavBar from "../components/BottomNav";
 import { useTheme } from "./hooks/useTheme";
+import CameraWithFilters from "../components/CameraWithFilters";
 
 // Types
 interface ProfileFormData {
@@ -424,6 +426,7 @@ export default function EditProfileScreen() {
   const [errors, setErrors] = useState<FormErrors>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [cameraModalVisible, setCameraModalVisible] = useState(false);
   const { colors } = useTheme();
 
   // Load existing profile or use defaults
@@ -478,8 +481,30 @@ export default function EditProfileScreen() {
     []
   );
 
-  // Handle image picker
-  const handleChangeAvatar = async () => {
+  // Handle avatar change
+  const handleChangeAvatar = () => {
+    Alert.alert(
+      "Change Avatar",
+      "Choose how to select your avatar",
+      [
+        {
+          text: "Take Photo",
+          onPress: () => setCameraModalVisible(true),
+        },
+        {
+          text: "Choose from Gallery",
+          onPress: handleSelectFromGallery,
+        },
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+      ]
+    );
+  };
+
+  // Handle selecting from gallery
+  const handleSelectFromGallery = async () => {
     // Request permission
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (status !== "granted") {
@@ -503,6 +528,12 @@ export default function EditProfileScreen() {
       setFormData((prev) => ({ ...prev, avatar: uri }));
       Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     }
+  };
+
+  // Handle photo taken from camera
+  const handlePhotoTaken = (uri: string) => {
+    setFormData((prev) => ({ ...prev, avatar: uri }));
+    Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
   };
 
   const handleSave = async () => {
@@ -750,6 +781,13 @@ export default function EditProfileScreen() {
 
       {/* Bottom Nav */}
       <NavBar />
+
+      {/* Camera Modal */}
+      <CameraWithFilters
+        visible={cameraModalVisible}
+        onClose={() => setCameraModalVisible(false)}
+        onPhotoTaken={handlePhotoTaken}
+      />
     </LinearGradient>
   );
 }
