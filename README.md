@@ -95,6 +95,14 @@ Implemented a sophisticated theme system with Redux Toolkit, advanced animations
 <img width="327" height="730" alt="image" src="https://github.com/user-attachments/assets/58ab1457-3ee4-41f8-86b9-ce362b16674f" />
 
 
+# React Native Activity 8 - Camera Feature
+
+Integrated camera feature with real-time filters and editing tools and exported it to Android phone with Expo Go
+
+<p align="center">
+  <img width="328" height="720" alt="Camera Screenshot 1" src="https://github.com/user-attachments/assets/c740a1df-f0b8-4b02-980b-42d37dea30a6" />
+  <img width="328" height="720" alt="Camera Screenshot 2" src="https://github.com/user-attachments/assets/ca57d957-175b-4995-81f5-dd30de68b7f0" />
+</p>
 
 
 ---
