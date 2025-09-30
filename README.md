@@ -107,10 +107,11 @@ Integrated camera feature with real-time filters and editing tools and exported 
 # React Native Activity 9 - Iphone Emulator
 
 Allow IPhone emulator to run and ensured that it looks good
+<p align="center">
 <img width="328" height="720" alt="image" src="https://github.com/user-attachments/assets/6d76e2d9-9169-43ea-b770-49d422402361" />
 <img width="328" height="720" alt="image" src="https://github.com/user-attachments/assets/9b27bf0b-38b5-4ad3-a378-78ffc793ce9c" />
 <img width="328" height="720" alt="image" src="https://github.com/user-attachments/assets/4cb79411-c6c2-485e-b04e-6054bc1c079c" />
-
+</p>
 ---
 
 ## 🚀 Setup
